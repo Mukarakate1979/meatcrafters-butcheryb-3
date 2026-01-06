@@ -43,4 +43,19 @@ Notes: ${notes}`;
   window.location.href =
     "mailto:704trader@gmail.com?subject=New MeatCrafter Order&body=" +
     encodeURIComponent(message);
+img {
+  width: 100%;
+  border-radius: 5px;
+}
+
+.note {
+  font-size: 14px;
+  color: #555;
+}
+
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
 });
