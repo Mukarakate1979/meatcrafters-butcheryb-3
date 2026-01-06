@@ -13,12 +13,32 @@
 </header>
 
 <form id="orderForm">
-  <input type="text" id="name" placeholder="Your Name" required>
-  <input type="text" id="product" placeholder="Product" required>
+
+  <input type="text" id="name" placeholder="Customer Name" required>
+
+  <input type="text" id="product" readonly>
+  <input type="number" id="price" readonly>
+
   <input type="number" id="quantity" placeholder="Quantity (kg)" required>
+  <input type="text" id="total" placeholder="Total ($)" readonly>
+
+  <label>Delivery Date</label>
+  <input type="date" id="date" required>
+
+  <label>Delivery Time</label>
+  <input type="time" id="time" required>
+
+  <label>Payment Method</label>
+  <select id="payment">
+    <option>Cash</option>
+    <option>EcoCash</option>
+    <option>Bank Transfer</option>
+  </select>
+
   <textarea id="notes" placeholder="Additional notes"></textarea>
 
-  <button type="submit" class="btn">Send Order</button>
+  <button type="submit" class="btn">Confirm Order</button>
+
 </form>
 
 <footer>
