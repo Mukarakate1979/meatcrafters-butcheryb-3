@@ -1,61 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Order | MeatCrafter</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Your Order | MeatCrafter</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Basic styling to ensure it looks professional */
+        .order-container { max-width: 800px; margin: 20px auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+        .form-row { display: flex; gap: 15px; flex-wrap: wrap; }
+        .form-row > div { flex: 1; min-width: 200px; }
+        input, select, textarea { padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        .btn-confirm { background-color: #8B0000; color: white; padding: 12px; border: none; cursor: pointer; font-weight: bold; border-radius: 5px; }
+        .btn-confirm:hover { background-color: #a00000; }
+        .info-text { font-size: 0.9em; color: #555; margin-top: 10px; }
+    </style>
 </head>
 <body>
 
 <header>
-  <h2>Place Your Order</h2>
+    <h2>MeatCrafter Order Form</h2>
 </header>
 
-<form id="orderForm">
+<div class="order-container">
+    <h3>Place Your Order</h3>
+    <form id="orderForm">
+        <div class="form-row">
+            <div class="form-group">
+                <label>Customer Name</label>
+                <input type="text" id="customerName" placeholder="Full Name" required>
+            </div>
+            <div class="form-group">
+                <label>Selected Product</label>
+                <input type="text" id="productName" readonly>
+            </div>
+        </div>
 
-  <input type="text" id="name" placeholder="Customer Name" required>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Quantity (kg)</label>
+                <input type="number" id="quantity" step="0.1" min="0.5" value="1" oninput="calculateTotal()">
+            </div>
+            <div class="form-group">
+                <label>Total ($)</label>
+                <input type="text" id="totalPrice" readonly>
+            </div>
+        </div>
 
-  <input type="text" id="product" readonly>
-  <input type="number" id="price" readonly>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Delivery Date</label>
+                <input type="date" id="deliveryDate" required>
+            </div>
+            <div class="form-group">
+                <label>Delivery Time</label>
+                <input type="time" id="deliveryTime" required>
+            </div>
+        </div>
 
-  <input type="number" id="quantity" placeholder="Quantity (kg)" required>
-  <input type="text" id="total" placeholder="Total ($)" readonly>
+        <div class="form-group">
+            <label>Payment Method</label>
+            <select id="paymentMethod">
+                <option value="Cash">Cash</option>
+                <option value="EcoCash">EcoCash</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+            </select>
+            <p class="info-text" id="paymentNote">*EcoCash payment instructions will be sent via WhatsApp after confirmation.</p>
+        </div>
 
-  <label>Delivery Date</label>
-  <input type="date" id="date" required>
+        <div class="form-group">
+            <label>Additional Notes</label>
+            <textarea id="notes" rows="3" placeholder="Special instructions (e.g., thin slices)"></textarea>
+        </div>
 
-  <label>Delivery Time</label>
-  <input type="time" id="time" required>
+        <div class="form-row">
+            <button type="button" class="btn-confirm" onclick="sendWhatsApp()">Order via WhatsApp</button>
+            <button type="button" class="btn-confirm" style="background-color: #333;" onclick="sendEmail()">Order via Email</button>
+        </div>
+    </form>
 
-  <label>Payment Method</label>
-  <select id="payment">
-    <option>Cash</option>
-    <option>EcoCash</option>
-    <option>Bank Transfer</option>
-  </select>
+    <p><a href="shop.html">← Back to Shop</a></p>
+</div>
 
-  <textarea id="notes" placeholder="Additional notes"></textarea>
+<script>
+    // 1. Get Product and Price from the URL (from the Shop page)
+    const urlParams = new URLSearchParams(window.location.search);
+    const product = urlParams.get('product') || 'Selected Meat';
+    const pricePerKg = parseFloat(urlParams.get('price')) || 0;
 
-  <button type="submit" class="btn">Confirm Order</button>
+    document.getElementById('productName').value = product;
 
-</form>
+    function calculateTotal() {
+        const qty = document.getElementById('quantity').value;
+        const total = qty * pricePerKg;
+        document.getElementById('totalPrice').value = "$" + total.toFixed(2);
+    }
 
-<footer>
-  <a href="shop.html">← Back to Shop</a>
-</footer>
+    // Initial calculation
+    calculateTotal();
 
-  <label>Payment Method</label>
-<select id="payment">
-  <option>Cash</option>
-  <option>EcoCash</option>
-  <option>Bank Transfer</option>
-</select>
+    // 2. Function to send to WhatsApp
+    function sendWhatsApp() {
+        const name = document.getElementById('customerName').value;
+        const qty = document.getElementById('quantity').value;
+        const total = document.getElementById('totalPrice').value;
+        const date = document.getElementById('deliveryDate').value;
+        const time = document.getElementById('deliveryTime').value;
+        const payment = document.getElementById('paymentMethod').value;
+        const notes = document.getElementById('notes').value;
 
-<p class="note">
-  *EcoCash payment instructions will be sent via WhatsApp after order confirmation.
-</p>
+        if(!name || !date || !time) { alert("Please fill in all details"); return; }
 
-<script src="scripts.js"></script>
+        const phoneNumber = "263771234567"; // REPLACE WITH YOUR PHONE NUMBER
+        const message = `*New Order - MeatCrafter*%0A*Customer:* ${name}%0A*Product:* ${product}%0A*Quantity:* ${qty}kg%0A*Total:* ${total}%0A*Delivery:* ${date} at ${time}%0A*Payment:* ${payment}%0A*Notes:* ${notes}`;
+        
+        window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+    }
+
+    // 3. Function to send to Email
+    function sendEmail() {
+        const name = document.getElementById('customerName').value;
+        const total = document.getElementById('totalPrice').value;
+        const email = "orders@meatcrafter.com"; // REPLACE WITH YOUR EMAIL
+        
+        const subject = `Order from ${name}`;
+        const body = `Order Details:%0D%0AProduct: ${product}%0D%0ATotal: ${total}%0D%0ADelivery Date: ${document.getElementById('deliveryDate').value}`;
+        
+        window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+    }
+</script>
+
 </body>
 </html>
